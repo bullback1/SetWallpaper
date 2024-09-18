@@ -1,2 +1,2 @@
 @echo off
-powershell -ExecutionPolicy Bypass -File "C:\Sohn\SetWallpaper.ps1"
+powershell -ExecutionPolicy Bypass -File "C:\yourfolder\SetWallpaper.ps1"
