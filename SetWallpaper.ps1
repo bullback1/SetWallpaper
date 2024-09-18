@@ -1,3 +1,9 @@
+# This script sets the desktop wallpaper based on the current screen resolution.
+# Usage:
+# 1. Set the desired wallpaper image file paths.
+# 2. Run this script in PowerShell.
+
+# Define a class to use the Windows API for setting the wallpaper
 Add-Type -TypeDefinition @"
 using System;
 using System.Runtime.InteropServices;
@@ -7,12 +13,12 @@ public class Wallpaper {
 }
 "@
 
-# 상수 정의
+# Define constants
 $SPI_SETDESKWALLPAPER = 20
 $SPIF_UPDATEINIFILE = 1
 $SPIF_SENDCHANGE = 2
 
-# Function to get the primary screen resolution
+# Function to get the current screen resolution
 function Get-ScreenResolution {
     Add-Type -AssemblyName System.Windows.Forms
     $screen = [System.Windows.Forms.Screen]::PrimaryScreen
@@ -21,19 +27,25 @@ function Get-ScreenResolution {
     return "$width x $height"
 }
 
-# Define the paths to the wallpaper images
-$wallpaperPath1 = "C:\Sohn\wallpaper\untitled(1).png"
-$wallpaperPath2 = "C:\Sohn\wallpaper\untitled(2).png"
+# Set wallpaper image paths (users can modify these paths)
+$wallpaperPath1 = "C:\yourfolder\untitled(1).png"
+$wallpaperPath2 = "C:\yourfolder\untitled(2).png"
 
-# Define the resolution settings
+# Define resolution settings
 $resolution1 = "2560 x 1080"
 $resolution2 = "1920 x 1080"
 
-# Function to set the wallpaper using Windows API
+# Function to set the wallpaper using the Windows API
 function Set-Wallpaper {
     param (
         [string]$path
     )
+    
+    if (-Not (Test-Path $path)) {
+        Write-Output "File does not exist: $path"
+        return
+    }
+
     $path = [System.IO.Path]::GetFullPath($path)
     [Wallpaper]::SystemParametersInfo($SPI_SETDESKWALLPAPER, 0, $path, $SPIF_UPDATEINIFILE -bor $SPIF_SENDCHANGE)
 }
@@ -43,7 +55,7 @@ try {
     $resolution = Get-ScreenResolution
     Write-Output "Current Resolution: $resolution"
     
-    # Check resolution and set wallpaper
+    # Check the resolution and set the wallpaper accordingly
     if ($resolution -eq $resolution1) {
         Set-Wallpaper -path $wallpaperPath1
         Write-Output "Wallpaper set to: $wallpaperPath1"
